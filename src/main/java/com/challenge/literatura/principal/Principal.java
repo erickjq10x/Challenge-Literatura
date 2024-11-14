@@ -1,12 +1,16 @@
 package com.challenge.literatura.principal;
 
+import com.challenge.literatura.model.Author;
 import com.challenge.literatura.model.Book;
 import com.challenge.literatura.model.DatoBook;
+import com.challenge.literatura.model.Result;
 import com.challenge.literatura.repository.IAuthorRepository;
 import com.challenge.literatura.repository.IBookRepository;
 import com.challenge.literatura.service.ConvierteDatos;
 import com.challenge.literatura.service.ServiceApi;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Principal {
@@ -16,6 +20,8 @@ public class Principal {
     private ConvierteDatos convierteDatos = new ConvierteDatos();
     private IBookRepository bookRep;
     private IAuthorRepository authorRep;
+    private List<Book> libros = new ArrayList<>();
+    List<Author> authors = new ArrayList<>();
 
     public Principal(IBookRepository bookRepository, IAuthorRepository authorRepository) {
         bookRep = bookRepository;
@@ -41,6 +47,17 @@ public class Principal {
                 case 1:
                     buscarLibroPorTitulo();
                     break;
+                case 2:
+                    listarLibrosRegistrados();
+                    break;
+                case 3:
+                    listarautoresRegistrados();
+                    break;
+                case 4:
+                    listarAutoresPorAnio();
+                    break;
+                case 5:
+                    listarLibrosPorIdioma();
                 case 0:
                     System.out.println("Cerrando Aplicacion");
                     break;
@@ -51,18 +68,60 @@ public class Principal {
         }
     }
 
-    public DatoBook getDatosBook(){
+    public Book getDatosBook(){
         System.out.println("Introduzca el titulo: ");
-        var titulo = scanner.nextLine();
+        var titulo = scanner.nextLine().toLowerCase();
         var json = serviceApi.obtenerDatos(URL + titulo.replaceAll(" ", "%20"));
-        DatoBook datoBook = convierteDatos.obtenerDatos(json,DatoBook.class);
-        return datoBook;
+        Result result = convierteDatos.obtenerDatos(json, Result.class);
+        DatoBook datoBook = result.resultBooks().get(0);
+        return new Book(datoBook);
     }
 
     public void buscarLibroPorTitulo() {
-        DatoBook datoBook = getDatosBook();
-        Book book = new Book(datoBook);
+        Book book = getDatosBook();
         bookRep.save(book);
         System.out.println(book);
+    }
+
+    public void listarLibrosRegistrados(){
+        libros = bookRep.findAll();
+        if (libros.isEmpty()) {
+            System.out.println("No hay libros registrados");
+        } else {
+            libros.stream().forEach(System.out::println);
+        }
+
+    }
+
+    public void listarautoresRegistrados(){
+        authors = authorRep.findAll();
+        if (authors.isEmpty()) {
+            System.out.println("No hay autores registrados");
+        } else {
+            authors.stream().forEach(System.out::println);
+        }
+    }
+
+    public void listarAutoresPorAnio(){
+        System.out.println("Introduzca el año: ");
+        int anio = scanner.nextInt();
+        scanner.nextLine();
+        authors = authorRep.findYear(anio);
+        if (authors.isEmpty()) {
+            System.out.println("No hay autores registrados");
+        } else {
+            authors.stream().forEach(System.out::println);
+        }
+    }
+
+    public void listarLibrosPorIdioma(){
+        System.out.println("Introduzca el idioma: ");
+        String idioma = scanner.nextLine().toLowerCase();
+        libros = bookRep.findidiomas(idioma);
+        if (libros.isEmpty()) {
+            System.out.println("No hay libros registrados");
+        } else {
+            libros.stream().forEach(System.out::println);
+        }
     }
 }

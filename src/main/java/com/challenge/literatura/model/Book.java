@@ -2,6 +2,8 @@ package com.challenge.literatura.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "libro")
 public class Book {
@@ -10,19 +12,20 @@ public class Book {
     private long id;
     @Column(unique = true)
     private String titulo;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "autor_id")
     private Author autor;
-    private String idioma;
-    private double numeroDeDesacargas;
+    private List<String> idioma;
+    private long numeroDeDesacargas;
 
     //Constructors
 
     public Book() {
     }
 
-    public Book (DatoBook datoBook) {
+    public Book(DatoBook datoBook) {
         this.titulo = datoBook.titulo();
-        this.autor = datoBook.autor();
+        this.autor = new Author(datoBook.autor().get(0)) ;
         this.idioma = datoBook.idioma();
         this.numeroDeDesacargas = datoBook.numeroDeDescargas();
     }
@@ -53,19 +56,19 @@ public class Book {
         this.autor = autor;
     }
 
-    public String getIdioma() {
+    public List<String> getIdioma() {
         return idioma;
     }
 
-    public void setIdioma(String idioma) {
+    public void setIdioma(List<String> idioma) {
         this.idioma = idioma;
     }
 
-    public double getNumeroDeDesacargas() {
+    public long getNumeroDeDesacargas() {
         return numeroDeDesacargas;
     }
 
-    public void setNumeroDeDesacargas(double numeroDeDesacargas) {
+    public void setNumeroDeDesacargas(long numeroDeDesacargas) {
         this.numeroDeDesacargas = numeroDeDesacargas;
     }
 

@@ -13,7 +13,7 @@ public class Author {
     private String nombre;
     private int anioNacimiento;
     private int anioMuerte;
-    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Book> books;
 
     //Constructors
@@ -77,6 +77,7 @@ public class Author {
     }
 
     public void setBooks(List<Book> books) {
+        books.forEach(b -> b.setAutor(this));
         this.books = books;
     }
 }
