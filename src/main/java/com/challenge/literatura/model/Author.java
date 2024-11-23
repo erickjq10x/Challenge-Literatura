@@ -3,6 +3,7 @@ package com.challenge.literatura.model;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "autor")
@@ -32,9 +33,14 @@ public class Author {
 
     @Override
     public String toString() {
-        return "nombre ='" + nombre + '\'' +
-                ", Año nacimiento =" + anioNacimiento +
-                ", Año de fallecimeinto =" + anioMuerte;
+        return """
+                -----------------
+                Autor: %s
+                Fecha de nacimiento: %s
+                Fecha de fallecimiento: %s
+                Libros: %s
+                -----------------
+                """.formatted(nombre, anioNacimiento, anioMuerte, books.stream().map(Book::getTitulo).collect(Collectors.joining(", ")));
     }
 
     //Getters & Setters

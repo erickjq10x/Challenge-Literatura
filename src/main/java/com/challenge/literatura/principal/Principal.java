@@ -10,6 +10,7 @@ import com.challenge.literatura.service.ConvierteDatos;
 import com.challenge.literatura.service.ServiceApi;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -98,7 +99,7 @@ public class Principal {
         if (authors.isEmpty()) {
             System.out.println("No hay autores registrados");
         } else {
-            authors.stream().forEach(System.out::println);
+            authors.stream().sorted(Comparator.comparing(Author::getNombre)).forEach(System.out::println);
         }
     }
 
@@ -115,7 +116,7 @@ public class Principal {
     }
 
     public void listarLibrosPorIdioma(){
-        System.out.println("Introduzca el idioma: ");
+        System.out.println("Introduzca el idioma: \nes - Español\nen - Ingles\nfr - Frances\npt - Portugues");
         String idioma = scanner.nextLine().toLowerCase();
         libros = bookRep.findidiomas(idioma);
         if (libros.isEmpty()) {

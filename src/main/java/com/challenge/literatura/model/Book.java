@@ -15,7 +15,7 @@ public class Book {
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "autor_id")
     private Author autor;
-    private List<String> idioma;
+    private String idioma;
     private long numeroDeDesacargas;
 
     //Constructors
@@ -25,8 +25,9 @@ public class Book {
 
     public Book(DatoBook datoBook) {
         this.titulo = datoBook.titulo();
-        this.autor = new Author(datoBook.autor().get(0)) ;
-        this.idioma = datoBook.idioma();
+        this.autor = (datoBook.autor() != null && !datoBook.autor().isEmpty())?
+                new Author(datoBook.autor().get(0)):null;
+        this.idioma = datoBook.idioma().get(0);
         this.numeroDeDesacargas = datoBook.numeroDeDescargas();
     }
 
@@ -56,11 +57,11 @@ public class Book {
         this.autor = autor;
     }
 
-    public List<String> getIdioma() {
+    public String getIdioma() {
         return idioma;
     }
 
-    public void setIdioma(List<String> idioma) {
+    public void setIdioma(String idioma) {
         this.idioma = idioma;
     }
 
@@ -76,10 +77,14 @@ public class Book {
 
     @Override
     public String toString() {
-        return "titulo='" + titulo + '\'' +
-                ", autor='" + autor + '\'' +
-                ", idioma='" + idioma + '\'' +
-                ", numeroDeDesacargas=" + numeroDeDesacargas;
+        return """
+                ----- Libro -----
+                Titulo: %s
+                Autor: %s
+                Idioma: %s
+                Numero de descargas: %s
+                -----------------
+                """.formatted(titulo, autor.getNombre(), idioma, numeroDeDesacargas);
     }
 
 }
